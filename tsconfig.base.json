@@ -1,0 +1,27 @@
+// Settings every package shares; each package's tsconfig.json extends this
+// and sets `include`. Only typechecks: tsdown does the build (tsdown.base.ts).
+{
+  "compilerOptions": {
+    "target": "es2023",
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    // Exports carry explicit types, so tsdown emits .d.ts per file with oxc,
+    // without running the TypeScript compiler.
+    "declaration": true,
+    "isolatedDeclarations": true
+  }
+}

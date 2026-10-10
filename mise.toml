@@ -1,0 +1,83 @@
+[tools]
+node = "24"
+pnpm = "12"
+# For `lint:actions` and `lint:workflows` below.
+actionlint = "1.7.12"
+zizmor = "1.30.1"
+
+[env]
+# Root devDependencies (tsc, biome, vitest, changeset, ...) are usable directly.
+_.path = ["{{config_root}}/node_modules/.bin"]
+
+[tasks.install]
+description = "Install the workspace's dependencies"
+run = "pnpm install --frozen-lockfile"
+
+[tasks.lint]
+description = "Every lint: Biome, the workflows, the packages' published shape"
+depends = ["lint:*"]
+
+[tasks."lint:biome"]
+description = "Biome lint and format check over the whole repo"
+depends = ["install"]
+run = "biome check --error-on-warnings ."
+
+[tasks."lint:actions"]
+description = "actionlint over .github/workflows"
+run = "actionlint"
+
+# `--offline`: the audits that ask GitHub's API would need a token; the one
+# that matters most, unpinned `uses:`, doesn't.
+[tasks."lint:workflows"]
+description = "zizmor over .github: unpinned actions, injection, leaked credentials"
+run = "zizmor --offline --min-severity low .github"
+
+# What a consumer installs: publint checks package.json against the files in
+# the tarball, attw that TypeScript resolves the types for every entry point.
+# Needs dist/, so it runs after build.
+[tasks."lint:packages"]
+description = "publint and attw over every package's packed tarball"
+depends = ["build"]
+run = "pnpm -r --no-bail --if-present lint:package"
+
+[tasks.fix]
+description = "Apply Biome lint fixes and formatting"
+depends = ["install"]
+run = "biome check --write ."
+
+# One tsc per package (each has its own tsconfig), plus scripts/.
+[tasks.typecheck]
+description = "Typecheck every package and scripts/"
+depends = ["install"]
+run = ["pnpm -r --no-bail --if-present typecheck", "tsc -p scripts"]
+
+# One vitest run over every package and scripts/ (vitest.config.ts `projects`).
+[tasks.test]
+description = "Run every package's tests"
+depends = ["install"]
+run = "vitest run"
+
+[tasks.build]
+description = "Build every package into its dist/"
+depends = ["install"]
+run = "pnpm -r --if-present build"
+
+[tasks.ci]
+description = "Everything CI runs"
+depends = ["lint", "typecheck", "test", "build"]
+
+[tasks.new]
+description = "Scaffold a new package at packages/<name> from templates/package"
+usage = '''
+arg "<name>" help="package name, kebab-case; published as @dellbrook/<name>"
+flag "-d --description <description>" default="" help="one line for package.json and the README"
+'''
+run = [
+  "node scripts/new-package.ts {{usage.name}} --description \"{{usage.description}}\"",
+  "pnpm install",
+]
+
+[tasks.changeset]
+description = "Record a release note and version bump for the packages you changed"
+depends = ["install"]
+run = "changeset"
