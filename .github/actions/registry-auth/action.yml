@@ -1,0 +1,17 @@
+name: registry-auth
+description: >-
+  Points the @dellbrook scope at GitHub Packages and authenticates to it, for
+  the changesets steps that look up or publish versions. ~/.npmrc holds only
+  the `${NODE_AUTH_TOKEN}` placeholder, which npm and pnpm expand; each step
+  that needs the registry sets NODE_AUTH_TOKEN to the job's token, so other
+  steps (pnpm install, the build) never see it.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        # shellcheck disable=SC2016 # the placeholder is literal on purpose
+        {
+          echo "@dellbrook:registry=https://npm.pkg.github.com"
+          echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}'
+        } >> ~/.npmrc

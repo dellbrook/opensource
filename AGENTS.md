@@ -1,8 +1,9 @@
 # dellbrook/opensource
 
 A pnpm workspace of independent open-source TypeScript packages, each
-published to npm as `@dellbrook/<name>` from `packages/<name>`. README.md has
-the overview; RELEASING.md has the release flow and the npm setup.
+published as `@dellbrook/<name>` from `packages/<name>`, for now to GitHub
+Packages (npm.pkg.github.com). README.md has the overview; RELEASING.md has
+the release flow and the plan for moving to npmjs.com.
 
 ## Commands
 
@@ -45,8 +46,8 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 - `lint:package` (publint + attw over the packed tarball) checks what a
   consumer installs: run as part of `mise run lint`.
 - Every package keeps its own README.md (install and usage) and LICENSE
-  (MIT), and `publishConfig` with `access: public`, `provenance: true` and
-  the npmjs registry. Shared dev tools (typescript, vitest, tsdown, biome)
+  (MIT), and `publishConfig` with `access: public` and the GitHub Packages
+  registry. Shared dev tools (typescript, vitest, tsdown, biome)
   are root devDependencies; a package lists only what it needs at runtime,
   plus devDependencies specific to it.
 - A package that depends on another one here uses `workspace:^`; changesets
@@ -59,16 +60,14 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 1. `mise run new <name> --description "..."`
 2. Write `src/`, its tests and the README's usage section.
 3. Add it to the package table in the root README.md.
-4. Add a changeset (`minor` for a first `0.1.0`).
-5. Before it's released, the first version is published by hand and a
-   trusted publisher configured (RELEASING.md, "Per package"); tell the
-   user, since that needs their npm login.
+4. Add a changeset (`minor` for a first `0.1.0`). The release workflow
+   publishes it; a new package needs no registry setup.
 
 ## CI
 
 - `.github/workflows/ci.yml`: `mise run ci` on every PR and push to main.
-- `.github/workflows/release.yml`: changesets' version/pack/publish jobs.
-  Never publish to npm from a local machine except the first release
-  described above.
+- `.github/workflows/release.yml`: changesets' version/pack/publish jobs,
+  publishing with the job's `GITHUB_TOKEN`
+  (`.github/actions/registry-auth`). Never publish from a local machine.
 - Actions are pinned by commit SHA with the version in a comment;
   `mise run lint` runs actionlint and zizmor over them.
