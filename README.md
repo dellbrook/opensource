@@ -7,7 +7,7 @@ For now they publish to GitHub Packages; installing one needs a token (see
 
 | Package | Description |
 | --- | --- |
-| [`@dellbrook/example`](packages/example) | Example of the package layout; not published |
+| [`@dellbrook/example`](packages/example) | Example of the package layout; published to prove the release pipeline |
 
 ## Development
 
