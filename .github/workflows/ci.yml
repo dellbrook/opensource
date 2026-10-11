@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  # release.yml starts it on changesets' "Version Packages" PR, which (opened
+  # with GITHUB_TOKEN) triggers no pull_request run of its own; the check
+  # still lands on the PR's head commit, where branch protection wants it.
+  workflow_dispatch:
 
 permissions:
   contents: read

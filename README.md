@@ -38,7 +38,9 @@ Write the code, add a row to the table above, and record a release with
 [Changesets](https://changesets.dev): each PR that changes a package adds a
 changeset (`mise run changeset`) naming the packages and the bump. On main,
 the `release` workflow keeps a "Version Packages" PR open with the bumps and
-changelogs; merging it publishes those packages to GitHub Packages. See
+changelogs; merging it publishes those packages to GitHub Packages. Every
+other merge publishes a per-commit version of the packages it changed under
+the `main` dist-tag (`npm install @dellbrook/<name>@main`). See
 [RELEASING.md](RELEASING.md).
 
 ## License

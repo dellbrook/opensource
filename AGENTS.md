@@ -29,7 +29,8 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 - `templates/package/`: what `mise run new` copies. `__NAME__` and
   `__DESCRIPTION__` are filled in. Change it when a convention changes, and
   apply the same change to the existing packages.
-- `scripts/`: repo tooling (the scaffolder), with its own tests.
+- `scripts/`: repo tooling (the scaffolder, per-commit publishing), with
+  its own tests.
 - Shared config at the root: `tsconfig.base.json`, `tsdown.base.ts`,
   `biome.json`, `vitest.config.ts` (one `projects` entry per package),
   `.changeset/config.json`.
@@ -66,8 +67,13 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 ## CI
 
 - `.github/workflows/ci.yml`: `mise run ci` on every PR and push to main.
-- `.github/workflows/release.yml`: changesets' version/pack/publish jobs,
+- `.github/workflows/release.yml`: on every other main push, `snapshot`
+  publishes a per-commit version (`<next patch>-main.<date>.<run>.g<sha>`,
+  dist-tag `main`) of the packages it changed (`scripts/snapshot.ts`).
+  Changesets' version/pack/publish jobs handle real releases,
   publishing with the job's `GITHUB_TOKEN`
   (`.github/actions/registry-auth`). Never publish from a local machine.
+- `main` is protected by a ruleset in `dellbrook/iac` (`github.ts`): pull
+  requests only, and `ci` must pass. Repository settings live there.
 - Actions are pinned by commit SHA with the version in a comment;
   `mise run lint` runs actionlint and zizmor over them.

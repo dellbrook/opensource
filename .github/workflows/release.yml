@@ -8,6 +8,8 @@
 #   in the registry yet and publish it, with a git tag and GitHub release
 #   for each.
 # - none: nothing to do.
+# Every push that isn't a release also publishes a per-commit version of the
+# packages it changed, under the `main` dist-tag (`snapshot`).
 # See RELEASING.md.
 name: release
 
@@ -54,6 +56,7 @@ jobs:
     permissions:
       contents: write # commit the version bumps
       pull-requests: write # open the "Version Packages" PR
+      actions: write # start ci on it
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -62,7 +65,48 @@ jobs:
         with:
           cache: false
       - run: mise run install
-      - uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+      - id: version
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+      # A PR opened with GITHUB_TOKEN starts no workflows, so ci (a required
+      # check on main) would never report on it; workflow_dispatch is the
+      # one trigger GITHUB_TOKEN may use.
+      - if: steps.version.outputs.pr-number != ''
+        run: gh workflow run ci.yml --ref "changeset-release/$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+
+  # A per-commit version of each package this push changed (and of its
+  # dependents), e.g. 0.1.1-main.20261010.42.gabc1234, under the `main`
+  # dist-tag: scripts/snapshot.ts. Not on a release push, which publishes
+  # the real versions instead.
+  snapshot:
+    if: needs.select-mode.outputs.mode != 'publish'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write # publish to GitHub Packages
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The diff against the previous main commit, however many commits
+          # the push brought.
+          fetch-depth: 0
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache: false
+      # Everything CI checks, then build: nothing is published that CI
+      # wouldn't pass.
+      - run: mise run ci
+      - uses: ./.github/actions/registry-auth
+      - run: node scripts/snapshot.ts ${SINCE:+--since "$SINCE"}
+        env:
+          # Empty for a branch's first push: then every package.
+          SINCE: ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.before || '' }}
+          NODE_AUTH_TOKEN: ${{ github.token }}
 
   pack:
     if: needs.select-mode.outputs.mode == 'publish'
