@@ -23,16 +23,19 @@ Packages with `"private": true` (like `packages/example`) are never
 published.
 
 The "Version Packages" PR is opened with the workflow's `GITHUB_TOKEN`, and
-GitHub doesn't start workflows for PRs that token opens, so `ci` doesn't run
-on it. The `pack` job runs the same checks before it packs anything.
+GitHub doesn't start workflows for PRs that token opens. So the `version`
+job starts `ci` on the PR's branch itself (`workflow_dispatch`), which is
+what lets the PR satisfy main's required `ci` check.
 
-## One-time setup (by hand)
+## Repository settings
 
-In `dellbrook/opensource` → Settings → Actions → General → Workflow
-permissions, check "Allow GitHub Actions to create and approve pull
-requests", for the Version Packages PR.
+`dellbrook/iac` manages this repository (`github.ts`): the shared baseline,
+"Allow GitHub Actions to create and approve pull requests" (for the Version
+Packages PR), and a ruleset on `main`: changes land by pull request once
+`ci` passes, with no direct or force pushes. Change them there, not on
+github.com.
 
-That's all. A package published by the workflow is linked to this repository
+A package published by the workflow is linked to this repository
 by its `repository` field, so it inherits the repository's visibility
 (public) and access. To check: github.com/dellbrook → Packages.
 

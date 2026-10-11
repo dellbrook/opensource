@@ -69,5 +69,7 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 - `.github/workflows/release.yml`: changesets' version/pack/publish jobs,
   publishing with the job's `GITHUB_TOKEN`
   (`.github/actions/registry-auth`). Never publish from a local machine.
+- `main` is protected by a ruleset in `dellbrook/iac` (`github.ts`): pull
+  requests only, and `ci` must pass. Repository settings live there.
 - Actions are pinned by commit SHA with the version in a comment;
   `mise run lint` runs actionlint and zizmor over them.
