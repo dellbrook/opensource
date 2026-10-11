@@ -1,0 +1,40 @@
+{
+  "name": "@dellbrook/__NAME__",
+  "version": "0.0.0",
+  "description": "__DESCRIPTION__",
+  "license": "MIT",
+  "author": "Jeeyoung Kim",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dellbrook/opensource.git",
+    "directory": "packages/__NAME__"
+  },
+  "homepage": "https://github.com/dellbrook/opensource/tree/main/packages/__NAME__#readme",
+  "bugs": "https://github.com/dellbrook/opensource/issues",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "lint:package": "publint --strict && attw --pack . --profile esm-only"
+  }
+}

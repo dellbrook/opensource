@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    // Scripts aren't published, so their exports needn't spell out types.
+    "isolatedDeclarations": false
+  },
+  "include": ["*.ts", "../*.ts"]
+}

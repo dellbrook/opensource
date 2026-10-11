@@ -1,0 +1,8 @@
+# zizmor (`mise run lint:workflows`) audits the workflows' supply chain:
+# unpinned actions, template injection, credentials left on disk.
+rules:
+  # Wants `$/.github/actions/x` for this repo's own actions. `./` is the
+  # form GitHub documents and actionlint understands, and it runs from the
+  # same checkout either way.
+  self-repository:
+    disable: true
