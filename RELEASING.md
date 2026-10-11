@@ -19,6 +19,28 @@ before its first release. Moving to npmjs.com is described at the end.
    each package whose version isn't in the registry yet, publishes it, and
    pushes a `@dellbrook/<name>@<version>` tag and a GitHub release for each.
 
+## Per-commit versions
+
+Every other push to main publishes a version of each package that commit
+changed, plus the packages that depend on it, named by the commit:
+`<next patch>-main.<YYYYMMDD>.<run>.g<sha>`, e.g.
+`0.1.1-main.20261010.42.gabc1234` while `0.1.0` is the latest release. These
+versions sort above the last release and below the next. They're published
+under the `main` dist-tag, so `latest` stays on real releases:
+
+```sh
+npm install @dellbrook/<name>@main        # the newest commit's
+npm install @dellbrook/<name>@0.1.1-main.20261010.42.gabc1234
+```
+
+A change outside `packages/` that changes every build (the lockfile, the
+root `package.json`, `tsconfig.base.json`, `tsdown.base.ts`) publishes every
+package. Docs-only changes publish nothing. A push that publishes a release
+(the Version Packages merge) doesn't publish per-commit versions too. It's
+the `snapshot` job in `release.yml`, running `scripts/snapshot.ts`, and it
+needs no changeset. To see what it would publish:
+`node scripts/snapshot.ts --since <commit> --dry-run`.
+
 Packages with `"private": true` (like `packages/example`) are never
 published.
 
