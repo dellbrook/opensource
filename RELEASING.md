@@ -57,8 +57,20 @@ Packages PR), and a ruleset on `main`: changes land by pull request once
 github.com.
 
 A package published by the workflow is linked to this repository
-by its `repository` field, so it inherits the repository's visibility
-(public) and access. To check: github.com/dellbrook → Packages.
+by its `repository` field and gets its access, but GitHub creates it
+**private**. Neither GitHub's API nor iac can change that, so make each new
+package public by hand after its first publish:
+
+1. Once, for the org: an owner opens
+   https://github.com/organizations/dellbrook/settings/packages and allows
+   **Public** under "Package creation". This is done for `dellbrook`.
+   Without it, the package's visibility change is "disabled by admin".
+2. For each new package: https://github.com/orgs/dellbrook/packages →
+   the package → Package settings → Danger Zone → Change visibility →
+   Public.
+
+To check, `https://github.com/dellbrook/opensource/pkgs/npm/<name>` should
+load logged out.
 
 ## Installing from GitHub Packages
 

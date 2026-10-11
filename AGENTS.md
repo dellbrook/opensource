@@ -62,7 +62,10 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 2. Write `src/`, its tests and the README's usage section.
 3. Add it to the package table in the root README.md.
 4. Add a changeset (`minor` for a first `0.1.0`). The release workflow
-   publishes it; a new package needs no registry setup.
+   publishes it.
+5. GitHub creates the package private on its first publish. Tell the user to
+   make it public by hand (RELEASING.md, "Repository settings"); there's no
+   API for it.
 
 ## CI
 
