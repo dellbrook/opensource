@@ -43,10 +43,10 @@ needs no changeset. To see what it would publish:
 
 Packages with `"private": true` are never published.
 
-The "Version Packages" PR is opened with the workflow's `GITHUB_TOKEN`, and
-GitHub doesn't start workflows for PRs that token opens. So the `version`
-job starts `ci` on the PR's branch itself (`workflow_dispatch`), which is
-what lets the PR satisfy main's required `ci` check.
+The "Version Packages" PR is opened by `github-actions[bot]`. Its `ci` run
+counts for main's required check. The repo requires approval for workflow
+runs from first-time contributors, so the first such PR's run waited for
+approval ("Approve and run workflows" on the PR).
 
 ## Repository settings
 
