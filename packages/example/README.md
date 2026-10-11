@@ -1,6 +1,6 @@
 # @dellbrook/example
 
-Example package: proves the build, test and release setup works. Not published.
+Example package: proves the build, test and release setup works end to end.
 
 ## Install
 

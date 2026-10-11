@@ -41,8 +41,7 @@ the `snapshot` job in `release.yml`, running `scripts/snapshot.ts`, and it
 needs no changeset. To see what it would publish:
 `node scripts/snapshot.ts --since <commit> --dry-run`.
 
-Packages with `"private": true` (like `packages/example`) are never
-published.
+Packages with `"private": true` are never published.
 
 The "Version Packages" PR is opened with the workflow's `GITHUB_TOKEN`, and
 GitHub doesn't start workflows for PRs that token opens. So the `version`

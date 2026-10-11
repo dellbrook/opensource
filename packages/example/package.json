@@ -1,8 +1,7 @@
 {
   "name": "@dellbrook/example",
   "version": "0.0.0",
-  "private": true,
-  "description": "Example package: proves the build, test and release setup works. Not published.",
+  "description": "Example package: proves the build, test and release setup works end to end.",
   "license": "MIT",
   "author": "Jeeyoung Kim",
   "repository": {

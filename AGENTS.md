@@ -54,7 +54,7 @@ Tools come from mise (`mise.toml`); run everything through `mise run`:
 - A package that depends on another one here uses `workspace:^`; changesets
   rewrites it to a version range on publish. It reads the other package's
   `dist/`, so build first (`mise run build`).
-- `"private": true` keeps a package out of releases (`packages/example`).
+- `"private": true` keeps a package out of releases and per-commit versions.
 
 ## Adding a package
 
